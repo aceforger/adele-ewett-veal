@@ -8,6 +8,11 @@ const Books = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+    setIsVisible(true);
+  }, []);
+  
+  useEffect(() => {
     setIsVisible(true);
   }, []);
 
