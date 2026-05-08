@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 const Contact = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [activeTab, setActiveTab] = useState('email');
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
 
   useEffect(() => {
@@ -26,6 +27,32 @@ const Contact = () => {
         </h1>
         <div className="w-24 h-1 bg-red-600 mx-auto"></div>
         <p className="text-gray-600 mt-4">I'd love to hear from you</p>
+      </div>
+
+      {/* Contact Tabs */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex bg-gray-100 rounded-lg p-1">
+          <button
+            onClick={() => setActiveTab('email')}
+            className={`px-6 py-2 rounded-md font-semibold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'email'
+                ? 'bg-red-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-red-600'
+            }`}
+          >
+            ✉️ Email
+          </button>
+          <button
+            onClick={() => setActiveTab('social')}
+            className={`px-6 py-2 rounded-md font-semibold transition-all duration-300 flex items-center gap-2 ${
+              activeTab === 'social'
+                ? 'bg-red-600 text-white shadow-md'
+                : 'text-gray-600 hover:text-red-600'
+            }`}
+          >
+            🌐 Social
+          </button>
+        </div>
       </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -56,68 +83,80 @@ const Contact = () => {
               </div>
             </div>
           </div>
-
-          {/* Social Links */}
-          <div className="bg-white rounded-lg shadow-lg p-6 text-center">
-            <h3 className="text-xl font-bold text-black mb-4">Follow Me</h3>
-            <div className="flex justify-center gap-4">
-              {['facebook', 'twitter', 'instagram'].map((social) => (
-                <a 
-                  key={social}
-                  href="#" 
-                  className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center text-black hover:bg-red-600 hover:text-white transition-all duration-300 transform hover:scale-110"
-                >
-                  <span className="capitalize text-sm">{social[0]}</span>
-                </a>
-              ))}
-            </div>
-          </div>
         </div>
         
-        {/* Contact Form */}
+        {/* Tab Content */}
         <div className="bg-white rounded-lg shadow-xl p-8 border border-gray-100">
-          <h2 className="text-2xl font-bold text-black mb-6">Send a Message</h2>
-          <form onSubmit={handleSubmit}>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Name</label>
-              <input 
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({...formData, name: e.target.value})}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
-                placeholder="Your name"
-              />
+          {activeTab === 'email' ? (
+            <>
+              <h2 className="text-2xl font-bold text-black mb-6">Send a Message</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-medium mb-2">Name</label>
+                  <input 
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+                    placeholder="Your name"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-medium mb-2">Email</label>
+                  <input 
+                    type="email"
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+                    placeholder="your@email.com"
+                  />
+                </div>
+                <div className="mb-6">
+                  <label className="block text-gray-700 font-medium mb-2">Message</label>
+                  <textarea 
+                    rows={5}
+                    value={formData.message}
+                    onChange={(e) => setFormData({...formData, message: e.target.value})}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
+                    placeholder="Your message..."
+                  ></textarea>
+                </div>
+                <button 
+                  type="submit"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Send Message
+                </button>
+              </form>
+            </>
+          ) : (
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-black mb-6">Connect With Me</h2>
+              <div className="flex justify-center gap-6 mb-8">
+                {[
+                  { name: 'Facebook', icon: 'f', color: 'hover:bg-blue-600' },
+                  { name: 'Twitter', icon: '🐦', color: 'hover:bg-blue-400' },
+                  { name: 'Instagram', icon: '📷', color: 'hover:bg-pink-600' },
+                  { name: 'LinkedIn', icon: '🔗', color: 'hover:bg-blue-700' }
+                ].map((social) => (
+                  <a 
+                    key={social.name}
+                    href="#" 
+                    className={`w-14 h-14 bg-gray-100 rounded-full flex items-center justify-center text-2xl text-black ${social.color} hover:text-white transition-all duration-300 transform hover:scale-110`}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+              <div className="bg-gray-50 rounded-lg p-6">
+                <p className="text-gray-600 mb-2">Follow me for updates and behind-the-scenes content!</p>
+                <p className="text-sm text-gray-500">@adelehewettveal</p>
+              </div>
             </div>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">Email</label>
-              <input 
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({...formData, email: e.target.value})}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
-                placeholder="your@email.com"
-              />
-            </div>
-            <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2">Message</label>
-              <textarea 
-                rows={5}
-                value={formData.message}
-                onChange={(e) => setFormData({...formData, message: e.target.value})}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent outline-none transition-all"
-                placeholder="Your message..."
-              ></textarea>
-            </div>
-            <button 
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-4 rounded-lg transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-            >
-              Send Message
-            </button>
-          </form>
+          )}
         </div>
       </div>
     </div>

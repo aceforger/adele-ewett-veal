@@ -1,25 +1,68 @@
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import Home from '../pages/Home';
+import About from '../pages/About';
+import Books from '../pages/Books';
+import Blog from '../pages/Blog';
+import Gallery from '../pages/Gallery';
+import Contact from '../pages/Contact';
+
 
 const Layout = () => {
-  const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState('home');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+      
+      // Detect active section for highlighting
+      const sections = ['home', 'about', 'blog', 'gallery', 'contact'];
+      const scrollPosition = window.scrollY + 100;
+      
+      for (const section of sections) {
+        const element = document.getElementById(section);
+        if (element) {
+          const { offsetTop, offsetHeight } = element;
+          if (scrollPosition >= offsetTop && scrollPosition < offsetTop + offsetHeight) {
+            setActiveSection(section);
+            break;
+          }
+        }
+      }
     };
+    
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    // Get the navbar height dynamically
+    const navbar = document.querySelector('nav');
+    const navbarHeight = navbar ? navbar.offsetHeight : 80;
+    
+    // Get element position
+    const elementPosition = element.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - navbarHeight;
+    
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+    setIsMenuOpen(false);
+  }
+};
+
   const navLinks = [
-    { path: '/', name: 'Home' },
-    { path: '/about', name: 'About' },
-    { path: '/blog', name: 'Blog' },
-    { path: '/gallery', name: 'Gallery' },
-    { path: '/contact', name: 'Contact' },
+    { id: 'home', name: 'Home' },
+    { id: 'about', name: 'About' },
+    { id: 'blog', name: 'Blog' },
+    { id: 'gallery', name: 'Gallery' },
+    { id: 'contact', name: 'Contact' },
   ];
 
   return (
@@ -30,45 +73,45 @@ const Layout = () => {
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo/Brand */}
-            <Link 
-              to="/" 
+            {/* Logo/Brand - Click to scroll to top */}
+            <button 
+              onClick={() => scrollToSection('home')}
               className="text-2xl font-bold tracking-tight transition-all duration-300 hover:scale-105"
             >
               <span className="text-white">Adele</span>
               <span className="text-red-600"> Hewett</span>
               <span className="text-white"> Veal</span>
-            </Link>
+            </button>
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-6">
               <div className="flex space-x-1">
                 {navLinks.map((link) => (
-                  <Link
-                    key={link.path}
-                    to={link.path}
+                  <button
+                    key={link.id}
+                    onClick={() => scrollToSection(link.id)}
                     className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-md overflow-hidden group ${
-                      location.pathname === link.path
+                      activeSection === link.id
                         ? 'text-red-600'
                         : 'text-gray-300 hover:text-white'
                     }`}
                   >
                     <span className="relative z-10">{link.name}</span>
-                    {location.pathname === link.path && (
+                    {activeSection === link.id && (
                       <span className="absolute inset-0 bg-red-600/10 rounded-md"></span>
                     )}
                     <span className="absolute bottom-0 left-0 w-full h-0.5 bg-red-600 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></span>
-                  </Link>
+                  </button>
                 ))}
               </div>
               
-              {/* Buy Now Button - Stands out on the right */}
-              <Link
-                to="/books"
+              {/* Buy Now Button - Scrolls to Books section */}
+              <button
+                onClick={() => navigate('/books')}
                 className="ml-4 px-6 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl animate-pulse"
               >
                 Buy Now
-              </Link>
+              </button>
             </div>
 
             {/* Mobile menu button */}
@@ -92,55 +135,72 @@ const Layout = () => {
           }`}>
             <div className="py-2 space-y-1">
               {navLinks.map((link) => (
-                <Link
-                  key={link.path}
-                  to={link.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`block px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
-                    location.pathname === link.path
+                <button
+                  key={link.id}
+                  onClick={() => scrollToSection(link.id)}
+                  className={`block w-full text-left px-3 py-2 rounded-md text-base font-medium transition-all duration-300 ${
+                    activeSection === link.id
                       ? 'bg-red-600 text-white'
                       : 'text-gray-300 hover:bg-red-600/20 hover:text-white'
                   }`}
                 >
                   {link.name}
-                </Link>
+                </button>
               ))}
-              {/* Buy Now button for mobile */}
-              <Link
-                to="/books"
-                onClick={() => setIsMenuOpen(false)}
-                className="block px-3 py-2 mt-2 bg-red-600 text-white font-semibold rounded-md text-center hover:bg-red-700 transition-all duration-300"
+              <button
+                onClick={() => navigate('/books')}
+                className="block w-full px-3 py-2 mt-2 bg-red-600 text-white font-semibold rounded-md text-center hover:bg-red-700 transition-all duration-300"
               >
                 Buy Now
-              </Link>
+              </button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Main Content with padding for fixed navbar */}
-      <main className="pt-16">
-        <Outlet />
+      {/* Main Content - All Sections (using existing pages) */}
+      <main>
+        <section id="home">
+          <Home />
+        </section>
+        <section id="about">
+          <About />
+        </section>
+        <section id="blog">
+          <Blog />
+        </section>
+        <section id="gallery">
+          <Gallery />
+        </section>
+        <section id="contact">
+          <Contact />
+        </section>
       </main>
 
       {/* Footer */}
-      <footer className="bg-black text-white py-12 mt-20">
+      <footer className="bg-black text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
-            <div>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
+            <div className="md:col-span-1">
               <h3 className="text-xl font-bold mb-4">
                 <span className="text-red-600">Adele Hewett</span> Veal
               </h3>
               <p className="text-gray-400 text-sm">Author & Entrepreneur</p>
             </div>
             <div>
-              <h4 className="font-semibold mb-3 text-red-600">Quick Links</h4>
+              <h4 className="font-semibold mb-3 text-red-600">Explore</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li><Link to="/" className="hover:text-red-600 transition-colors">Home</Link></li>
-                <li><Link to="/about" className="hover:text-red-600 transition-colors">About</Link></li>
-                <li><Link to="/blog" className="hover:text-red-600 transition-colors">Blog</Link></li>
-                <li><Link to="/gallery" className="hover:text-red-600 transition-colors">Gallery</Link></li>
-                <li><Link to="/contact" className="hover:text-red-600 transition-colors">Contact</Link></li>
+                <li><button onClick={() => scrollToSection('home')} className="hover:text-red-600 transition-colors">Home</button></li>
+                <li><button onClick={() => scrollToSection('about')} className="hover:text-red-600 transition-colors">About</button></li>
+                <li><button onClick={() => scrollToSection('books')} className="hover:text-red-600 transition-colors">Books</button></li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-3 text-red-600">Resources</h4>
+              <ul className="space-y-2 text-sm text-gray-400">
+                <li><button onClick={() => scrollToSection('blog')} className="hover:text-red-600 transition-colors">Blog</button></li>
+                <li><button onClick={() => scrollToSection('gallery')} className="hover:text-red-600 transition-colors">Gallery</button></li>
+                <li><button onClick={() => scrollToSection('contact')} className="hover:text-red-600 transition-colors">Contact</button></li>
               </ul>
             </div>
             <div>
