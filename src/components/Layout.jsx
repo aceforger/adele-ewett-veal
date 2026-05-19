@@ -179,6 +179,23 @@ const Layout = () => {
 
       {/* Footer */}
       <footer className="bg-black text-white py-12">
+      <div className="mt-3 mb-10 flex justify-center">
+            <a
+              href="https://buy.stripe.com/7sY5kEdVm6vNfRU8Ey2kw07"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500
+                text-black text-2xl font-bold py-8 px-26 rounded-full
+                shadow-2xl
+                transform transition-all duration-300
+                hover:scale-105 hover:shadow-yellow-400/50
+                animate-pulse
+              "
+            >
+              Launch & Go-Live Portal
+            </a>
+          </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center md:text-left">
             <div className="md:col-span-1">
